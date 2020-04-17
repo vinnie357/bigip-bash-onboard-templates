@@ -1,18 +1,3 @@
-# bigip-bash-onboard-templates
-bash basic onboard scripts for aws,azure,gcp for bigip to use with terrraform
-
-
-## overview
-
-templates are expected to be used with cloud-init user-data.
-
-templates install, and verify the state of the f5 automation tool chain
-
-devices should be ready to accept f5 automation tool chain declarations after the script has completed.
-
-## example templating:
-
-```hcl
 # gcp
 data "http" "template_gcp" {
     url = "https://raw.githubusercontent.com/vinnie357/bigip-bash-onboard-templates/master/gcp/onboard.sh"
@@ -95,14 +80,3 @@ resource "local_file" "onboard_aws_file" {
     content     = "${data.template_file.vm_onboard_aws.rendered}"
     filename    = "${path.module}/onboard-aws-debug-bash.sh"
 }
-```
-## test/debug
-
-```bash
-# view
-cd example
-terrraform init
-terrraform plan
-terrraform apply --auto-approve
-# destroy
-terrraform destroy --auto-approve
