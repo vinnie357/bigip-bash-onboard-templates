@@ -148,15 +148,6 @@ tsCheckUrl="/mgmt/shared/telemetry/info"
 # cloud failover ext
 cfUrl="/mgmt/shared/cloud-failover/declare"
 cfCheckUrl="/mgmt/shared/cloud-failover/info"
-# declaration content
-cat > /config/do1.json <<EOF
-${DO1_Document}
-EOF
-cat > /config/do2.json <<EOF
-${DO2_Document}
-EOF
-DO_URL_POST="/mgmt/shared/declarative-onboarding"
-AS3_URL_POST="/mgmt/shared/appsvcs/declare"
 #
 # BIG-IPS ONBOARD SCRIPT
 #

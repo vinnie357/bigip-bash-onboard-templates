@@ -17,22 +17,26 @@ devices should be ready to accept f5 automation tool chain declarations after th
         url = "https://raw.githubusercontent.com/vinnie357/bigip-bash-onboard-templates/master/gcp/onboard.sh"
     }
     data "template_file" "vm_onboard" {
-    template = "${http.template.body)}"
-
-    vars = {
-        uname        	      = "${var.adminAccountName}"
-        upassword        	  = "${var.adminPass != "" ? "${var.adminPass}" : "${random_password.password.result}"}"
-        doVersion             = "latest"
-        #example version:
-        #as3Version           = "3.16.0"
-        as3Version            = "latest"
-        tsVersion             = "latest"
-        cfVersion             = "latest"
-        fastVersion           = "0.2.0"
-        libs_dir              = "${var.libsDir}"
-        onboard_log           = "${var.onboardLog}"
-        projectPrefix         = "${var.projectPrefix}"
-        buildSuffix           = "${var.buildSuffix}"
+       
+        template = "${data.http.template.body}"
+        vars = {
+            uname        	      = "${var.adminAccountName}"
+            upassword        	  = "${var.adminPass != "" ? "${var.adminPass}" : "${random_password.password.result}"}"
+            doVersion             = "latest"
+            #example version:
+            #as3Version           = "3.16.0"
+            as3Version            = "latest"
+            tsVersion             = "latest"
+            cfVersion             = "latest"
+            fastVersion           = "0.2.0"
+            libs_dir              = "${var.libsDir}"
+            onboard_log           = "${var.onboardLog}"
+            projectPrefix         = "${var.projectPrefix}"
+            buildSuffix           = "${var.buildSuffix}"
+        }
     }
+    resource "local_file" "onboard_file" {
+        content     = "${data.template_file.vm_onboard.rendered}"
+        filename    = "${path.module}/onboard-debug-bash.sh"
     }
 ```
