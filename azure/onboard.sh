@@ -69,28 +69,23 @@ toolsList=$(cat -<<EOF
   "tools": [
       {
         "name": "f5-declarative-onboarding",
-        "version": "${doVersion}",
-        "url": "${doExternalDeclarationUrl}"
+        "version": "${doVersion}"
       },
       {
         "name": "f5-appsvcs-extension",
-        "version": "${as3Version}",
-        "url": "${as3ExternalDeclarationUrl}"
+        "version": "${as3Version}"
       },
       {
         "name": "f5-telemetry-streaming",
-        "version": "${tsVersion}",
-        "url": "${tsExternalDeclarationUrl}"
+        "version": "${tsVersion}"
       },
       {
         "name": "f5-cloud-failover-extension",
-        "version": "${cfVersion}",
-        "url": "${cfExternalDeclarationUrl}"
+        "version": "${cfVersion}"
       },
       {
         "name": "f5-appsvcs-templates",
-        "version": "${fastVersion}",
-        "url": "${cfExternalDeclarationUrl}"
+        "version": "${fastVersion}"
       }
 
   ]
