@@ -340,7 +340,7 @@ tmsh save /sys config
 # # metadata route
 # echo  -e 'create cli transaction;
 # modify sys db config.allow.rfc3927 value enable;
-# create sys management-route metadata-route network 169.254.169.254/32 gateway ${mgmtGateway};
+# create sys management-route metadata-route network 169.254.169.254/32 gateway $${mgmtGateway};
 # submit cli transaction' | tmsh -q
 # tmsh save /sys config
 
