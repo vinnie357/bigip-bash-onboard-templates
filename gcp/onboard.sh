@@ -102,7 +102,7 @@ echo "create admin account"
 admin_username='${uname}'
 admin_password='${upassword}'
 # echo  -e "create cli transaction;
-tmsh create auth user $admin_username password $admin_password shell bash partition-access add { all-partitions { role admin } };
+tmsh create auth user $admin_username password "$admin_password" shell bash partition-access add { all-partitions { role admin } };
 # modify /sys db systemauth.primaryadminuser value $admin_username;
 # submit cli transaction" | tmsh -q
 tmsh list auth user $admin_username
@@ -236,7 +236,7 @@ do
      postBody="{\"operation\":\"INSTALL\",\"packageFilePath\":\"$rpmFilePath/$filename\"}"
      while true
      do
-        iappApiStatus=$(curl -i -u $CREDS  $local_host$rpmInstallUrl | grep HTTP | awk '{print $2}')
+        iappApiStatus=$(curl -i -u "$CREDS"  $local_host$rpmInstallUrl | grep HTTP | awk '{print $2}')
         case $iappApiStatus in 
             404)
                 echo "api not ready status: $iappApiStatus"
@@ -244,12 +244,12 @@ do
                 ;;
             200)
                 echo "api ready starting install task $filename"
-                install=$(restcurl -u $CREDS -X POST -d $postBody $rpmInstallUrl | jq -r .id )
+                install=$(restcurl -u "$CREDS" -X POST -d $postBody $rpmInstallUrl | jq -r .id )
                 break
                 ;;
               *)
                 echo "other error status: $iappApiStatus"
-                debug=$(restcurl -u $CREDS $rpmInstallUrl)
+                debug=$(restcurl -u "$CREDS" $rpmInstallUrl)
                 echo "ipp install debug: $debug"
                 ;;
         esac
@@ -259,7 +259,7 @@ do
   fi 
   while true
   do
-    status=$(restcurl -u $CREDS $rpmInstallUrl/$install | jq -r .status)
+    status=$(restcurl -u "$CREDS" $rpmInstallUrl/$install | jq -r .status)
     case $status in 
         FINISHED)
             # finished
@@ -276,13 +276,13 @@ do
             ;;
         FAILED)
             # failed
-            error=$(restcurl -u $CREDS $rpmInstallUrl/$install | jq .errorMessage)
+            error=$(restcurl -u "$CREDS" $rpmInstallUrl/$install | jq .errorMessage)
             echo "failed $filename task: $install error: $error"
             break
             ;;
         *)
             # other
-            debug=$(restcurl -u $CREDS $rpmInstallUrl/$install | jq . )
+            debug=$(restcurl -u "$CREDS" $rpmInstallUrl/$install | jq . )
             echo "failed $filename task: $install error: $debug"
             ;;
         esac
@@ -292,12 +292,12 @@ done
 
 function getDoStatus() {
     task=$1
-    doStatusType=$(restcurl -u $CREDS -X GET $doTaskUrl/$task | jq -r type )
+    doStatusType=$(restcurl -u "$CREDS" -X GET $doTaskUrl/$task | jq -r type )
     if [ "$doStatusType" == "object" ]; then
-        doStatus=$(restcurl -u $CREDS -X GET $doTaskUrl/$task | jq -r .result.status)
+        doStatus=$(restcurl -u "$CREDS" -X GET $doTaskUrl/$task | jq -r .result.status)
         echo $doStatus
     elif [ "$doStatusType" == "array" ]; then
-        doStatus=$(restcurl -u $CREDS -X GET $doTaskUrl/$task | jq -r .[].result.status)
+        doStatus=$(restcurl -u "$CREDS" -X GET $doTaskUrl/$task | jq -r .[].result.status)
         echo $doStatus
     else
         echo "unknown type:$doStatusType"
@@ -308,22 +308,22 @@ function checkDO() {
     count=0
     while [ $count -le 4 ]
     do
-    #doStatus=$(curl -i -u $CREDS $local_host$doCheckUrl | grep HTTP | awk '{print $2}')
-    doStatusType=$(restcurl -u $CREDS -X GET $doCheckUrl | jq -r type )
+    #doStatus=$(curl -i -u "$CREDS" $local_host$doCheckUrl | grep HTTP | awk '{print $2}')
+    doStatusType=$(restcurl -u "$CREDS" -X GET $doCheckUrl | jq -r type )
     if [ "$doStatusType" == "object" ]; then
-        doStatus=$(restcurl -u $CREDS -X GET $doCheckUrl | jq -r .code)
+        doStatus=$(restcurl -u "$CREDS" -X GET $doCheckUrl | jq -r .code)
         if [ $? == 1 ]; then
-            doStatus=$(restcurl -u $CREDS -X GET $doCheckUrl | jq -r .result.code)
+            doStatus=$(restcurl -u "$CREDS" -X GET $doCheckUrl | jq -r .result.code)
         fi
     elif [ "$doStatusType" == "array" ]; then
-        doStatus=$(restcurl -u $CREDS -X GET $doCheckUrl | jq -r .[].result.code)
+        doStatus=$(restcurl -u "$CREDS" -X GET $doCheckUrl | jq -r .[].result.code)
     else
         echo "unknown type:$doStatusType"
     fi
     echo "status $doStatus"
     if [[ $doStatus == "200" ]]; then
-        #version=$(restcurl -u $CREDS -X GET $doCheckUrl | jq -r .version)
-        version=$(restcurl -u $CREDS -X GET $doCheckUrl | jq -r .[].version)
+        #version=$(restcurl -u "$CREDS" -X GET $doCheckUrl | jq -r .version)
+        version=$(restcurl -u "$CREDS" -X GET $doCheckUrl | jq -r .[].version)
         echo "Declarative Onboarding $version online "
         break
     elif [[ $doStatus == "404" ]]; then
@@ -345,16 +345,16 @@ function checkAS3() {
     count=0
     while [ $count -le 4 ]
     do
-    #as3Status=$(curl -i -u $CREDS $local_host$as3CheckUrl | grep HTTP | awk '{print $2}')
-    as3Status=$(restcurl -u $CREDS -X GET $as3CheckUrl | jq -r .code)
+    #as3Status=$(curl -i -u "$CREDS" $local_host$as3CheckUrl | grep HTTP | awk '{print $2}')
+    as3Status=$(restcurl -u "$CREDS" -X GET $as3CheckUrl | jq -r .code)
     if  [ "$as3Status" == "null" ] || [ -z "$as3Status" ]; then
-        type=$(restcurl -u $CREDS -X GET $as3CheckUrl | jq -r type )
+        type=$(restcurl -u "$CREDS" -X GET $as3CheckUrl | jq -r type )
         if [ "$type" == "object" ]; then
             as3Status="200"
         fi
     fi
     if [[ $as3Status == "200" ]]; then
-        version=$(restcurl -u $CREDS -X GET $as3CheckUrl | jq -r .version)
+        version=$(restcurl -u "$CREDS" -X GET $as3CheckUrl | jq -r .version)
         echo "As3 $version online "
         break
     elif [[ $as3Status == "404" ]]; then
@@ -376,9 +376,9 @@ function checkTS() {
     count=0
     while [ $count -le 4 ]
     do
-    tsStatus=$(curl -si -u $CREDS $local_host$tsCheckUrl | grep HTTP | awk '{print $2}')
+    tsStatus=$(curl -si -u "$CREDS" $local_host$tsCheckUrl | grep HTTP | awk '{print $2}')
     if [[ $tsStatus == "200" ]]; then
-        version=$(restcurl -u $CREDS -X GET $tsCheckUrl | jq -r .version)
+        version=$(restcurl -u "$CREDS" -X GET $tsCheckUrl | jq -r .version)
         echo "Telemetry Streaming $version online "
         break
     else
@@ -393,9 +393,9 @@ function checkCF() {
     count=0
     while [ $count -le 4 ]
     do
-    cfStatus=$(curl -si -u $CREDS $local_host$cfCheckUrl | grep HTTP | awk '{print $2}')
+    cfStatus=$(curl -si -u "$CREDS" $local_host$cfCheckUrl | grep HTTP | awk '{print $2}')
     if [[ $cfStatus == "200" ]]; then
-        version=$(restcurl -u $CREDS -X GET $cfCheckUrl | jq -r .version)
+        version=$(restcurl -u "$CREDS" -X GET $cfCheckUrl | jq -r .version)
         echo "Cloud failover $version online "
         break
     else
@@ -410,9 +410,9 @@ function checkFAST() {
     count=0
     while [ $count -le 4 ]
     do
-    fastStatus=$(curl -si -u $CREDS $local_host$fastCheckUrl | grep HTTP | awk '{print $2}')
+    fastStatus=$(curl -si -u "$CREDS" $local_host$fastCheckUrl | grep HTTP | awk '{print $2}')
     if [[ $fastStatus == "200" ]]; then
-        version=$(restcurl -u $CREDS -X GET $fastCheckUrl | jq -r .version)
+        version=$(restcurl -u "$CREDS" -X GET $fastCheckUrl | jq -r .version)
         echo "FAST $version online "
         break
     else
