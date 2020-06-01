@@ -26,6 +26,8 @@ tsCheckUrl="/mgmt/shared/telemetry/info"
 # cloud failover ext
 cfUrl="/mgmt/shared/cloud-failover/declare"
 cfCheckUrl="/mgmt/shared/cloud-failover/info"
+# fast
+fastCheckUrl="/mgmt/shared/fast/info"
 # BIG-IPS ONBOARD SCRIPT
 
 
