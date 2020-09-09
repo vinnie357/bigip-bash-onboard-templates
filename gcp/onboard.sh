@@ -102,7 +102,7 @@ echo "create admin account"
 admin_username='${uname}'
 admin_password='${upassword}'
 # echo  -e "create cli transaction;
-tmsh create auth user $admin_username password "$admin_password" shell bash partition-access add { all-partitions { role admin } };
+tmsh create auth user $admin_username password \'$${admin_password}\' shell bash partition-access add { all-partitions { role admin } };
 # modify /sys db systemauth.primaryadminuser value $admin_username;
 # submit cli transaction" | tmsh -q
 tmsh list auth user $admin_username
