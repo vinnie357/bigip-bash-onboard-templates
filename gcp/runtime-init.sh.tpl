@@ -18,7 +18,7 @@ wait_bigip_ready
 MGMTADDRESS=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/ip' -H 'Metadata-Flavor: Google')
 MGMTMASK=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/subnetmask' -H 'Metadata-Flavor: Google')
 MGMTGATEWAY=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/gateway' -H 'Metadata-Flavor: Google')
-MGMTNETWORK=$(/bin/ipcalc -n $${MGMTADDRESS} $${MGMTMASK} | cut -d= -f2)
+MGMTNETWORK=$(/bin/ipcalc -n $MGMTADDRESS $MGMTMASK | cut -d= -f2)
 # if you want to access via console or password
 # generated via: openssl passwd -6 -salt f5f5
 #tmsh modify /auth user admin encrypted-password [salted password]
