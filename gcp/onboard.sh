@@ -612,9 +612,8 @@ waitMcpd
 #
 # n interfaces
 #
-interfacecount=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/' -H 'Metadata-Flavor: Google')
-interfaces=$${interfacecount//\/}
-
+interfacecount=\$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/' -H 'Metadata-Flavor: Google')
+interfaces=$\${interfacecount//\/}
 nics=0
 for int in \$interfaces;
  do echo \$int;
