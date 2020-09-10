@@ -612,18 +612,18 @@ waitMcpd
 #
 # n interfaces
 #
-interfacecount=\$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/' -H 'Metadata-Flavor: Google')
-interfaces=$\${interfacecount//\/}
-nics=0
-for int in \$interfaces;
- do echo \$int;
-   ((nics+=1))
-done
-echo \$nics
-if [[ \$nics == "1" ]]; then
+# interfacecount=\$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/' -H 'Metadata-Flavor: Google')
+# interfaces=$${interfacecount//\/}
+# nics=0
+# for int in \$interfaces;
+#  do echo \$int;
+#    ((nics+=1))
+# done
+echo $nics
+if [[ $nics == "1" ]]; then
 echo "1nic"
 fi
-if [[ \$nics == "2" ]]; then
+if [[ $nics == "2" ]]; then
 echo "2nic"
 echo "set tmm networks"
 echo  -e "create cli transaction;
@@ -637,7 +637,7 @@ tmsh save /sys config
 echo "done creating tmsh networking"
 end network
 fi
-if [[ \$nics == "3" ]]; then
+if [[ $nics == "3" ]]; then
 echo "3 nic"
 echo "set tmm networks"
 echo  -e "create cli transaction;
