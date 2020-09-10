@@ -83,10 +83,10 @@ tmsh modify sys software update auto-phonehome disabled
 tmsh modify sys global-settings mgmt-dhcp disabled
 tmsh delete sys management-route all
 tmsh delete sys management-ip all
-tmsh create sys management-ip ${MGMTADDRESS}/32
-tmsh create sys management-route mgmt_gw network ${MGMTGATEWAY}/32 type interface
-tmsh create sys management-route mgmt_net network ${MGMTNETWORK}/${MGMTMASK} gateway ${MGMTGATEWAY}
-tmsh create sys management-route default gateway ${MGMTGATEWAY}
+tmsh create sys management-ip $${MGMTADDRESS}/32
+tmsh create sys management-route mgmt_gw network $${MGMTGATEWAY}/32 type interface
+tmsh create sys management-route mgmt_net network $${MGMTNETWORK}/$${MGMTMASK} gateway $${MGMTGATEWAY}
+tmsh create sys management-route default gateway $${MGMTGATEWAY}
 tmsh modify sys global-settings remote-host add { metadata.google.internal { hostname metadata.google.internal addr 169.254.169.254 } }
 tmsh modify sys db failover.selinuxallowscripts value enable
 tmsh modify sys management-dhcp sys-mgmt-dhcp-config request-options delete { ntp-servers }
