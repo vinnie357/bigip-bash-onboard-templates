@@ -29,11 +29,15 @@ bigstart stop tmm
 #https://clouddocs.f5.com/cloud/public/v1/shared/change_mgmt_nic_google.html
 tmsh modify sys db provision.managementeth value eth1
 #https://clouddocs.f5.com/cloud/public/v1/google/Google_routes.html
-#tmsh modify sys db provision.1nicautoconfig value disable
+tmsh modify sys db provision.1nicautoconfig value disable
 tmsh save sys config
 bigstart start tmm
 wait_bigip_ready
-#sleep 30
+
+# modify asm interface
+cp /etc/ts/common/image.cfg /etc/ts/common/image.cfg.bak
+sed -i "s/iface0=eth0/iface0=eth1/g" /etc/ts/common/image.cfg
+
 # mgmt reboot workaround
 #https://support.f5.com/csp/article/K11948
 #https://support.f5.com/csp/article/K47835034
