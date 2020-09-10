@@ -441,6 +441,53 @@ function checkATC() {
 checkATC
 #
 # start network
+#
+# n interfaces
+interfacecount=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/' -H 'Metadata-Flavor: Google')
+interfaces=$${interfacecount//\/}
+
+nics=0
+for int in $interfaces;
+ do echo $int;
+   ((nics+=1))
+done
+echo "interfaces: $nics"
+if [[ $nics == "1" ]]; then
+echo "1nic"
+MGMTADDRESS=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip' -H 'Metadata-Flavor: Google')
+MGMTMASK=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/subnetmask' -H 'Metadata-Flavor: Google')
+MGMTGATEWAY=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/gateway' -H 'Metadata-Flavor: Google')
+
+INT2ADDRESS=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip' -H 'Metadata-Flavor: Google')
+INT2MASK=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/subnetmask' -H 'Metadata-Flavor: Google')
+INT2GATEWAY=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/gateway' -H 'Metadata-Flavor: Google')
+
+MGMTNETWORK=$(/bin/ipcalc -n $MGMTADDRESS $MGMTMASK | cut -d= -f2)
+INT2NETWORK=$(/bin/ipcalc -n $INT2ADDRESS $INT2MASK | cut -d= -f2)
+# network data
+echo " mgmt:$MGMTADDRESS,$MGMTMASK,$MGMTGATEWAY"
+echo "external:$INT2ADDRESS,$INT2MASK,$INT2GATEWAY"
+echo "cidr: $MGMTNETWORK"
+fi
+if [[ $nics == "2" ]]; then
+echo "2nic"
+MGMTADDRESS=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/ip' -H 'Metadata-Flavor: Google')
+MGMTMASK=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/subnetmask' -H 'Metadata-Flavor: Google')
+MGMTGATEWAY=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/gateway' -H 'Metadata-Flavor: Google')
+
+INT2ADDRESS=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip' -H 'Metadata-Flavor: Google')
+INT2MASK=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/subnetmask' -H 'Metadata-Flavor: Google')
+INT2GATEWAY=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/gateway' -H 'Metadata-Flavor: Google')
+
+MGMTNETWORK=$(/bin/ipcalc -n $MGMTADDRESS $MGMTMASK | cut -d= -f2)
+INT2NETWORK=$(/bin/ipcalc -n $INT2ADDRESS $INT2MASK | cut -d= -f2)
+# network data
+echo " mgmt:$MGMTADDRESS,$MGMTMASK,$MGMTGATEWAY"
+echo "external:$INT2ADDRESS,$INT2MASK,$INT2GATEWAY"
+echo "cidr: $MGMTNETWORK,$INT2NETWORK"
+fi
+if [[ $nics == "3" ]]; then
+echo "3 nic"
 MGMTADDRESS=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/ip' -H 'Metadata-Flavor: Google')
 MGMTMASK=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/subnetmask' -H 'Metadata-Flavor: Google')
 MGMTGATEWAY=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/gateway' -H 'Metadata-Flavor: Google')
@@ -461,6 +508,30 @@ echo " mgmt:$MGMTADDRESS,$MGMTMASK,$MGMTGATEWAY"
 echo "external:$INT2ADDRESS,$INT2MASK,$INT2GATEWAY"
 echo "internal: $INT3ADDRESS,$INT3MASK,$INT3GATEWAY"
 echo "cidr: $MGMTNETWORK,$INT2NETWORK,$INT3NETWORK"
+fi
+#
+# network
+#
+# MGMTADDRESS=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/ip' -H 'Metadata-Flavor: Google')
+# MGMTMASK=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/subnetmask' -H 'Metadata-Flavor: Google')
+# MGMTGATEWAY=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/1/gateway' -H 'Metadata-Flavor: Google')
+
+# INT2ADDRESS=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip' -H 'Metadata-Flavor: Google')
+# INT2MASK=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/subnetmask' -H 'Metadata-Flavor: Google')
+# INT2GATEWAY=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/gateway' -H 'Metadata-Flavor: Google')
+
+# INT3ADDRESS=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/2/ip' -H 'Metadata-Flavor: Google')
+# INT3MASK=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/2/subnetmask' -H 'Metadata-Flavor: Google')
+# INT3GATEWAY=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/2/gateway' -H 'Metadata-Flavor: Google')
+
+# MGMTNETWORK=$(/bin/ipcalc -n $MGMTADDRESS $MGMTMASK | cut -d= -f2)
+# INT2NETWORK=$(/bin/ipcalc -n $INT2ADDRESS $INT2MASK | cut -d= -f2)
+# INT3NETWORK=$(/bin/ipcalc -n $INT3ADDRESS $INT3MASK | cut -d= -f2)
+# # network data
+# echo " mgmt:$MGMTADDRESS,$MGMTMASK,$MGMTGATEWAY"
+# echo "external:$INT2ADDRESS,$INT2MASK,$INT2GATEWAY"
+# echo "internal: $INT3ADDRESS,$INT3MASK,$INT3GATEWAY"
+# echo "cidr: $MGMTNETWORK,$INT2NETWORK,$INT3NETWORK"
 
 # mgmt reboot workaround
 #https://support.f5.com/csp/article/K11948
@@ -538,21 +609,37 @@ done
 waitMcpd
 
 # networks
-# delete inital startup int2 address to change for the interface drop
-# echo "delete routes"
-# echo  -e "create cli transaction;
-# delete sys management-route default;
-# delete sys management-route dhclient_route1;
-# delete sys management-route dhclient_route2;
-# delete sys management-ip $INT2ADDRESS/32;
-# submit cli transaction" | tmsh -q
-# echo  -e "create cli transaction;
-# create sys management-ip $MGMTADDRESS/32;
-# create sys management-route mgmt_gw network $MGMTGATEWAY/32 type interface;
-# create sys management-route mgmt_net network $MGMTNETWORK/$MGMTMASK gateway $MGMTGATEWAY;
-# create sys management-route default gateway $MGMTGATEWAY mtu 1460;
-# submit cli transaction" | tmsh -q
-# echo "mgmt finished"
+#
+# n interfaces
+#
+interfacecount=$(curl -s -f --retry 20 'http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/' -H 'Metadata-Flavor: Google')
+interfaces=$${interfacecount//\/}
+
+nics=0
+for int in \$interfaces;
+ do echo \$int;
+   ((nics+=1))
+done
+echo \$nics
+if [[ \$nics == "1" ]]; then
+echo "1nic"
+fi
+if [[ \$nics == "2" ]]; then
+echo "2nic"
+echo "set tmm networks"
+echo  -e "create cli transaction;
+create net vlan external interfaces add { 1.0 } mtu 1460;
+create net self external-self address $INT2ADDRESS/32 vlan external;
+create net route ext_gw_interface network $INT2GATEWAY/32 interface external;
+create net route ext_rt network $INT2NETWORK/$INT2MASK gw $INT2GATEWAY;
+create net route default gw $INT2GATEWAY;
+submit cli transaction" | tmsh -q
+tmsh save /sys config
+echo "done creating tmsh networking"
+end network
+fi
+if [[ \$nics == "3" ]]; then
+echo "3 nic"
 echo "set tmm networks"
 echo  -e "create cli transaction;
 create net vlan external interfaces add { 1.0 } mtu 1460;
@@ -565,6 +652,23 @@ create net self internal-self address $INT3ADDRESS/32 vlan internal allow-servic
 create net route int_gw_interface network $INT3GATEWAY/32 interface internal;
 create net route int_rt network $INT3NETWORK/$INT3MASK gw $INT3GATEWAY;
 submit cli transaction" | tmsh -q
+tmsh save /sys config
+echo "done creating tmsh networking"
+end network
+fi
+#
+# echo "set tmm networks"
+# echo  -e "create cli transaction;
+# create net vlan external interfaces add { 1.0 } mtu 1460;
+# create net self external-self address $INT2ADDRESS/32 vlan external;
+# create net route ext_gw_interface network $INT2GATEWAY/32 interface external;
+# create net route ext_rt network $INT2NETWORK/$INT2MASK gw $INT2GATEWAY;
+# create net route default gw $INT2GATEWAY;
+# create net vlan internal interfaces add { 1.2 } mtu 1460;
+# create net self internal-self address $INT3ADDRESS/32 vlan internal allow-service default;
+# create net route int_gw_interface network $INT3GATEWAY/32 interface internal;
+# create net route int_rt network $INT3NETWORK/$INT3MASK gw $INT3GATEWAY;
+# submit cli transaction" | tmsh -q
 # tmsh save /sys config
 # echo "done creating tmsh networking"
 # end network

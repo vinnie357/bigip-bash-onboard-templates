@@ -106,3 +106,13 @@ terrraform plan
 terrraform apply --auto-approve
 # destroy
 terrraform destroy --auto-approve
+```
+## atc tweaks
+
+onboarding memory tweaks for ATC
+
+db memory settings ilx
+
+/app data resize ATC
+
+Java Heap memory settings
