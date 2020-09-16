@@ -135,13 +135,13 @@ exec 1>\$LOG_FILE 2>&1
 count=0
 while true
 do
-  STATUS=$(curl -s -k -I example.com | grep HTTP)
-  if [[ $STATUS == *"200"* ]]; then
+  STATUS=\$(curl -s -k -I example.com | grep HTTP)
+  if [[ \$STATUS == *"200"* ]]; then
     echo "internet access check passed"
     break
-  elif [ $count -le 6 ]; then
+  elif [ \$count -le 6 ]; then
     echo "Status code: $STATUS  Not done yet..."
-    count=$[$count+1]
+    count=\$[\$count+1]
   else
     echo "GIVE UP..."
     break
@@ -151,7 +151,7 @@ done
 # install
 #curl https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v0.9.0/scripts/install.sh | bash
 initVersion="1.0.0"
-curl -o /tmp/f5-bigip-runtime-init-$${initVersion}-1.gz.run https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v$${initVersion}/dist/f5-bigip-runtime-init-$${initVersion}-1.gz.run && bash /tmp/f5-bigip-runtime-init-$${initVersion}-1.gz.run -- '--cloud google'
+curl -o /tmp/f5-bigip-runtime-init-$\${initVersion}-1.gz.run https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v$\${initVersion}/dist/f5-bigip-runtime-init-$\${initVersion}-1.gz.run && bash /tmp/f5-bigip-runtime-init-$\${initVersion}-1.gz.run -- '--cloud google'
 # run
 f5-bigip-runtime-init --config-file /config/cloud/cloud_config.yaml
 EOF
