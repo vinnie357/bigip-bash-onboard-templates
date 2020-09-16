@@ -117,19 +117,19 @@ pre_onboard_enabled: []
 post_onboard_enabled: []
 EOF
 # run
-cat  <<EOF > /config/startup_script_atc.sh
+cat  <<'EOF' > /config/startup_script_atc.sh
 # logging
 LOG_FILE="/var/log/startup-atc-script.log"
-if [ ! -e \$LOG_FILE ]
+if [ ! -e $LOG_FILE ]
 then
-     touch \$LOG_FILE
-     exec &>>\$LOG_FILE
+     touch $LOG_FILE
+     exec &>>$LOG_FILE
 else
     #if file exists, exit as only want to run once
     echo "already run exiting"
     exit
 fi
-exec 1>\$LOG_FILE 2>&1
+exec 1>$LOG_FILE 2>&1
 # run time init
 source /usr/lib/bigstart/bigip-ready-functions
 wait_bigip_ready
@@ -137,13 +137,13 @@ wait_bigip_ready
 count=0
 while true
 do
-  STATUS=\$(curl -s -k -I example.com | grep HTTP)
-  if [[ \$STATUS == *"200"* ]]; then
+  STATUS=$(curl -s -k -I example.com | grep HTTP)
+  if [[ $STATUS == *"200"* ]]; then
     echo "internet access check passed"
     break
-  elif [ \$count -le 6 ]; then
+  elif [ $count -le 6 ]; then
     echo "Status code: $STATUS  Not done yet..."
-    count=\$[\$count+1]
+    count=$[$count+1]
   else
     echo "GIVE UP..."
     break
