@@ -97,25 +97,32 @@ chmod +x /config/startup_script_sol11948.sh
 # tmos init
 # configure
 mkdir -p /config/cloud
+# https://github.com/f5devcentral/f5-bigip-runtime-init/blob/develop/src/schema/base_schema.json
 cat  <<EOF > /config/cloud/cloud_config.yaml
-runtime_parameters: []
+---
+runtime_parameters:
+  - name: HOST_NAME
+    type: metadata
+    metadataProvider:
+        environment: gcp
+        type: compute
+        field: name
 extension_packages:
-    install_operations:
-        - extensionType: do
-          extensionVersion: 1.13.0
-          extensionUrl: file:///var/lib/cloud/icontrollx_installs/f5-declarative-onboarding-1.13.0-5.noarch.rpm
-          extensionHash: e7c9acb0ddfc9e9949c48b9a8de686c365764f28347aacf194a6de7e3ed183be
-        - extensionType: as3
-          extensionVersion: 3.20.0
-          extensionUrl: https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.20.0/f5-appsvcs-3.20.0-3.noarch.rpm
-          extensionHash: ba2db6e1c57d2ce6f0ca20876c820555ffc38dd0a714952b4266c4daf959d987
-        - extensionType: ilx
-          extensionUrl: file:///var/lib/cloud/icontrollx_installs/f5-appsvcs-templates-1.1.0-1.noarch.rpm
-          extensionVerificationEndpoint: /mgmt/shared/fast/info
+  install_operations:
+    - extensionType: do
+      extensionVersion: 1.15.0
+    - extensionType: as3
+      extensionVersion: 3.20.0
+    - extensionType: ts
+      extensionVersion: 1.14.0
+    - extensionType: cf
+      extensionVersion: 1.5.0
+    - extensionType: ilx
+      extensionUrl: https://github.com/F5Networks/f5-appsvcs-templates/releases/download/v1.3.0/f5-appsvcs-templates-1.3.0-1.noarch.rpm
+      extensionVersion: 1.3.0
+      extensionVerificationEndpoint: /mgmt/shared/fast/info
 extension_services:
-    service_operations: []
-pre_onboard_enabled: []
-post_onboard_enabled: []
+  service_operations: []
 EOF
 # run
 cat  <<'EOF' > /config/startup_script_atc.sh
