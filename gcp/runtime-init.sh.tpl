@@ -93,7 +93,23 @@ tmsh modify sys management-dhcp sys-mgmt-dhcp-config request-options delete { nt
 tmsh save sys config
 EOF
 chmod +x /config/startup_script_sol11948.sh
-
+# CHECK TO SEE NETWORK IS READY
+count=0
+while true
+do
+  STATUS=$(curl -s -k -I example.com | grep HTTP)
+  if [[ $STATUS == *"200"* ]]; then
+    echo "internet access check passed"
+    break
+  elif [ $count -le 6 ]; then
+    echo "Status code: $STATUS  Not done yet..."
+    count=$[$count+1]
+  else
+    echo "GIVE UP..."
+    break
+  fi
+  sleep 10
+done
 # install
 #curl https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v0.9.0/scripts/install.sh | bash
 initVersion="1.0.0"
