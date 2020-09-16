@@ -131,6 +131,8 @@ else
 fi
 exec 1>\$LOG_FILE 2>&1
 # run time init
+source /usr/lib/bigstart/bigip-ready-functions
+wait_bigip_ready
 # CHECK TO SEE NETWORK IS READY
 count=0
 while true
