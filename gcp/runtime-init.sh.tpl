@@ -96,6 +96,7 @@ chmod +x /config/startup_script_sol11948.sh
 
 # tmos init
 # configure
+mkdir -p /config/cloud
 cat  <<EOF > /config/cloud/cloud_config.yaml
 runtime_parameters: []
 extension_packages:
