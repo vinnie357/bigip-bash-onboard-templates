@@ -27,6 +27,15 @@ tmsh save sys config
 echo "done setting app directory size"
 # end modify appdata directory size
 
+#
+# sca
+#
+# as3
+cat > /config/as3.json <<EOF
+${AS3_Document}
+EOF
+externalVip=$(curl -sf --retry 20 -H Metadata:true "http://169.254.169.254/metadata/instance/network/interface?api-version=2017-08-01" | jq -r '.[1].ipv4.ipAddress[1].privateIpAddress')
+sed -i "s/-external-virtual-address-/$externalVip/g" /config/as3.json
 # tmos init
 # configure
 mkdir -p /config/cloud
@@ -56,16 +65,16 @@ pre_onboard_enabled:
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.15.0
+      extensionVersion: ${doVersion}
     - extensionType: as3
-      extensionVersion: 3.20.0
+      extensionVersion: ${as3Version}
     - extensionType: ts
-      extensionVersion: 1.14.0
+      extensionVersion: ${tsVersion}
     - extensionType: cf
-      extensionVersion: 1.5.0
+      extensionVersion: ${cfVersion}
     - extensionType: ilx
-      extensionUrl: https://github.com/F5Networks/f5-appsvcs-templates/releases/download/v1.3.0/f5-appsvcs-templates-1.3.0-1.noarch.rpm
-      extensionVersion: 1.3.0
+      extensionUrl: https://github.com/F5Networks/f5-appsvcs-templates/releases/download/v${fastVersion}/f5-appsvcs-templates-${fastVersion}-1.noarch.rpm
+      extensionVersion: ${fastVersion}
       extensionVerificationEndpoint: /mgmt/shared/fast/info
 extension_services:
   service_operations:
@@ -73,11 +82,11 @@ extension_services:
       type: inline
       value: ${DO_Document}
     - extensionType: as3
-      type: inline
-      value: ${AS3_Document}
+      type: url
+      value: file:///config/as3.json
 EOF
 # install run-time-init
-initVersion="1.0.0"
+initVersion="${initVersion}"
 curl -o /tmp/f5-bigip-runtime-init-$${initVersion}-1.gz.run https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v$${initVersion}/dist/f5-bigip-runtime-init-$${initVersion}-1.gz.run && bash /tmp/f5-bigip-runtime-init-$${initVersion}-1.gz.run -- '--cloud azure'
 # run
 f5-bigip-runtime-init --config-file /config/cloud/cloud_config.yaml
