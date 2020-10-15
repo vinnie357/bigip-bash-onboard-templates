@@ -62,6 +62,10 @@ pre_onboard_enabled:
       - /bin/tmsh modify /sys disk directory /appdata new-size 52256768
       - /bin/tmsh show sys disk directory /appdata
       - /bin/tmsh save sys config
+  - name: metadata_route
+    type inline
+    commands:
+      - echo  -e 'create cli transaction; modify sys db config.allow.rfc3927 value enable; create sys management-route metadata-route network 169.254.169.254/32 gateway ${mgmtGateway}; submit cli transaction' | tmsh -q
 extension_packages:
   install_operations:
     - extensionType: do
@@ -88,5 +92,8 @@ EOF
 # install run-time-init
 initVersion="${initVersion}"
 curl -o /tmp/f5-bigip-runtime-init-$${initVersion}-1.gz.run https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v$${initVersion}/dist/f5-bigip-runtime-init-$${initVersion}-1.gz.run && bash /tmp/f5-bigip-runtime-init-$${initVersion}-1.gz.run -- '--cloud azure'
+# debug
+# error,warn,info,debug,silly
+export F5_BIGIP_RUNTIME_INIT_LOG_LEVEL=debug
 # run
 f5-bigip-runtime-init --config-file /config/cloud/cloud_config.yaml
